@@ -1,0 +1,135 @@
+/* Color Variables */
+:root {
+    --darkblue: #006699;
+    --lightblue:  #01BBFF;
+    --white: #fff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color:var(--darkblue);
+    font-family: "Roboto", sans-serif;
+}
+
+hr {
+    margin: 50px 0 10px 0;
+    border-color: var(--lightblue);
+}
+
+.container {
+    padding: 20px 50px 50px 50px;
+}
+
+.main-header {
+    font-size: 60px;
+    text-align: center;
+    color: var(--lightblue);
+}
+
+.category-type {
+    font-size: 16px;
+    text-align: right;
+    color: var(--lightblue);
+}
+
+#quiz {
+   width: 80%;
+   margin: 0 auto;
+}
+
+#question {
+    font-size: 30px;
+    color: var(--white);
+    text-align: center;
+    margin: 50px 0 40px 0;
+}
+
+/* BUTTONS */
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    max-width: 600px;
+    margin: 30px auto 0 auto;
+}
+
+#btn0, #btn1, #btn2, #btn3 {
+    flex: 1 0 auto;
+    width: 250px;
+    margin: 10px 20px;
+    padding: 10px;
+    border: 1px solid #1D3C6A;
+    border-radius: 10px;
+    font-size: 20px;
+    background-color: var(--lightblue);
+    color: var(--white);
+}
+
+#btn0:hover, #btn1:hover, #btn2:hover, #btn3:hover {
+    cursor: pointer;
+    box-shadow: 0px 2px 15px black;
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+#btn0:focus, #btn1:focus, #btn2:focus, #btn3:focus {
+    outline: 0;
+}
+
+
+
+#progress {
+    color: var(--white);
+    font-size: 18px;
+}
+
+
+/* RESULTS */
+#score {
+    color: var(--white);
+    text-align: center;
+    font-size: 30px;
+    margin-top: 30px;
+}
+
+.try-again {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+.try-again-btn {
+    background-color: var(--lightblue);
+    color: var(--white);
+    text-align: center;
+    border-radius: 5px;
+    border: 1px solid #1D3C6A;
+    padding: 5px 10px;
+    text-decoration: none;
+}
+
+.try-again-btn:hover {
+    cursor: pointer;
+    box-shadow: 0px 2px 15px black;
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+
+/* MEDIA QUERY */
+
+@media (max-width: 600px) {
+    #quiz {
+        width: 100%;
+    }
+    .main-header {
+        margin-top: 20px;
+    }
+    #question {
+        font-size: 25px;
+    }
+   
+}
