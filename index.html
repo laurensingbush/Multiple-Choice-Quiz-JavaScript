@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
     <head lang="en">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,12 +9,13 @@
 
         <title>JavaScript Quiz</title>
     </head>
+
     <body>
         <div class="container">
             <div id="quiz">
                 <p class="category-type">Category: Computers</p>
                 <h1 class="main-header">Quiz</h1>
-                    
+
                 <hr>
                 <p id="question"></p>
 
@@ -23,15 +25,16 @@
                     <button id="btn2"><span id="choice2"></span></button>
                     <button id="btn3"><span id="choice3"></span></button>
                 </div>
-                
-                <footer>
-                    <hr>
-                    <p id="progress"></p>
-                </footer>
+
+                <hr>
+                <p id="progress"></p>
+                <div id="progressBar">
+                    <div id="progressBarFill"></div>
+                </div>
             </div>
 
-            <div id ="results"></div>
-
+            <div id="results"></div>
+            
         </div>
         <script src="quiz.js"></script>
     </body>

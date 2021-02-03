@@ -1,77 +1,124 @@
-// define properties for Quiz constructor
-function Quiz(questions) {
-    this.score = 0;
-    this.questions = questions;
-    this.currentQuestionIndex = 0;
-    this.color = "";
-}
+/**
+ * Quiz class
+ * 
+ * @constructor
+ * @param {Object} questions - questions of a quiz
+ */
 
-// add getCurrentQuestion() function to Quiz's prototype
-Quiz.prototype.getCurrentQuestion = function() {
-    return this.questions[this.currentQuestionIndex];
-}
-
-// add guess() function to Quiz's prototype
-// if user guesses correctly increase their score
-Quiz.prototype.guess = function(answer) {
-    if(this.getCurrentQuestion().isCorrectAnswer(answer)) {
-        this.score++;
-        this.color = "green";
-    } else {
-        this.color = "red";  
+class Quiz {
+    constructor(questions) {
+        this.score = 0;
+        this.questions = questions;
+        this.currentQuestionIndex = 0;
+        this.color = "";
     }
-    this.currentQuestionIndex++; // go to next question
+
+    getCurrentQuestion() {
+        return this.questions[this.currentQuestionIndex];
+    }
+
+    guess(answer) {
+        if(this.getCurrentQuestion().isCorrectAnswer(answer)) {
+            this.score++;
+            this.color = "green";
+        } else {
+            this.color = "red";
+        }
+        this.currentQuestionIndex++;
+    }
+
+    hasEnded() {
+        return this.currentQuestionIndex === this.questions.length;
+    }
 }
 
-// add hasEnded() function to Quiz's prototype
-// ends quiz after last question
-Quiz.prototype.hasEnded = function() {
-    return this.currentQuestionIndex === this.questions.length;
+/**
+ * Question class
+ * 
+ * @constructor
+ * @param {String} text - question
+ * @param {Array} choices - choices of a question
+ * @param {String} answer - answer of a question
+ */
+
+class Question {
+    constructor(text, choices, answer) {
+        this.text = text;
+        this.choices = choices;
+        this.answer = answer;
+    }
+
+    isCorrectAnswer(choice) {
+        return this.answer === choice;
+    }
 }
 
-// define properties for Question constructor
-function Question(text, choices, answer) {
-    this.text = text;
-    this.choices = choices;
-    this.answer = answer;
-}
 
-// add isCorrectAnswer() function to Question's prototype
-Question.prototype.isCorrectAnswer = function(choice) {
-    return this.answer === choice;
-}
+/**
+ * Progress Bar class
+ * 
+ * @constructor
+ * @param {Object} element - DOM element of progress bar
+ * @param {Number} initialValue - value of progress bar
+ */
+
+ class ProgressBar {
+    constructor(element, initialValue = 0) {
+        this.fillElement = element.querySelector("#progressBarFill");
+        this.setValue(initialValue);
+    }
+
+    setValue(newValue) {
+        if (newValue < 0) {
+            newValue = 0;
+        }
+        if (newValue > 100) {
+            newValue = 100;
+        }
+        this.value = newValue;
+        this.update();
+    }
+
+    update() {
+        const percentage = this.value + '%';
+        this.fillElement.style.width = percentage;
+    }
+ }
+
 
 // populate the quiz on the page
 function populate() {
     if (quiz.hasEnded()) {
+        // show user's score
         showScore();
     } else {
         // show the question
         document.getElementById("question").innerHTML = quiz.getCurrentQuestion().text;
         
         // show the choices
-        var choices = quiz.getCurrentQuestion().choices;
-        for (var index = 0; index < choices.length; index++) {
+        const choices = quiz.getCurrentQuestion().choices;
+        for (let index = 0; index < choices.length; index++) {
             document.getElementById("choice" + index).innerHTML = choices[index];
             guessHandler("btn" + index, choices[index]);
         }
 
-        // show question number
+        // show progress
         showProgress();
+        const progressBar = new ProgressBar(document.querySelector("#progressBar"));
+        progressBar.setValue(((quiz.currentQuestionIndex + 1) / quiz.questions.length) * 100);
     }
 };
 
 
-
-// once user clicks their guess, excute the guess() function
+// handle user's guesses on click
 function guessHandler(id, guess) {
-    var button = document.getElementById(id);
+    const button = document.getElementById(id);
 
     button.onclick = function() {
         quiz.guess(guess);
         
         // button color changes to green if correct, red if incorrect
-        // setTimeout delays loading of next question
+        // delay loading of next question
         button.style.backgroundColor = quiz.color;
         setTimeout(function() {
             button.style.backgroundColor = null;
@@ -81,15 +128,14 @@ function guessHandler(id, guess) {
 };
 
 
-// shows question number user is on
 function showProgress() {
-    var currentQuestionNum = quiz.currentQuestionIndex + 1;
+    const currentQuestionNum = quiz.currentQuestionIndex + 1;
     document.getElementById("progress").innerHTML = "Question " + currentQuestionNum + " of " + quiz.questions.length;
 };
 
-// shows the user's score at end of quiz
+
 function showScore() {
-    var quizOverHTML = "<h1 class='main-header'>Results</h1>";
+    let quizOverHTML = "<h1 class='main-header'>Results</h1>";
     quizOverHTML += "<h2 id='score'> Your score: " + quiz.score + "/" + quiz.questions.length + "</h2>";
     quizOverHTML += "<div class='try-again'><a class='try-again-btn' href='index.html'>Try Again</a></div>"
     document.getElementById("quiz").innerHTML = quizOverHTML;
@@ -111,24 +157,33 @@ function shuffle(array) {
 };
 
 
-// fetch the quiz data from JSON API
-var quiz;
-fetch("https://opentdb.com/api.php?amount=10&category=18&difficulty=easy&type=multiple")
-    .then(response => response.json())
-    .then(data => {
-        var results = data.results;
-        var questions = [];
-        results.forEach(function(result) {
-            var answers = result.incorrect_answers.concat(result.correct_answer);
-            shuffle(answers);
-            var temp = new Question(result.question, answers, result.correct_answer);
-            questions.push(temp);
-        })
 
-        // create the quiz
-        quiz = new Quiz(questions);
-        
-        // display the quiz 
-        populate();
-    })
-    .catch(error => console.log(error))  // catch any errors
+// fetch the quiz data from JSON API
+async function fetchData() {
+    let response = await fetch("https://opentdb.com/api.php?amount=10&category=18&difficulty=easy&type=multiple");
+    if (!response.ok) {
+        throw new Error(`HTTP error status: ${response.status}`);
+    } else {
+        return await response.json();
+    }
+}
+
+let quiz;
+fetchData().then((data) => {
+    const results = data.results;
+    const questions = [];
+    results.forEach(function(result) {
+        const answers = result.incorrect_answers.concat(result.correct_answer);
+        shuffle(answers);
+        const question = new Question(result.question, answers, result.correct_answer);
+        questions.push(question);
+    });
+
+    // create the quiz
+    quiz = new Quiz(questions);
+
+    // display the quiz
+    populate();
+
+}).catch(err => console.log(err));
+
